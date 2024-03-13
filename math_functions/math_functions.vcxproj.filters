@@ -18,5 +18,19 @@
     <ClCompile Include="main.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="number.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="function.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="number.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="function.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
