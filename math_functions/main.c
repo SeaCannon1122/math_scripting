@@ -29,19 +29,23 @@ int main() {
     struct FUNCTION_NODE* f = node();
     f->n[0] = node();
     f->n[1] = node();
+    f->n[1]->n[0] = node();
+    f->n[1]->n[1] = node();
 
-    fill_node_operation(f, DIV);
+    fill_node_operation(f,DIV);
 
-    struct NUMBER a = { 1, 1 };
-    fill_node_number(f->n[0], a);
+    struct NUMBER one = { 1, 1, 0, 1 };
+    fill_node_number(f->n[0], one);
 
-    fill_node_variable(f->n[1], var);
+    fill_node_operation(f->n[1], MUL);
+
+    fill_node_variable(f->n[1]->n[0], var);
+    fill_node_variable(f->n[1]->n[1], var);
 
     print_node(f);
     printf("\n\n");
     struct FUNCTION_NODE* fprime = node();
     fprime = derive(f, var);
-    simplefy(fprime);
     print_node(fprime);
     printf("\n\n");
     print_node(f);

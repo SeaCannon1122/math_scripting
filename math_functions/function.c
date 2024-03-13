@@ -69,27 +69,26 @@ void clear_node(struct FUNCTION_NODE* n) {
     for (int i = 0; i < 16; i++) { if (n->n[i] != NULL) { delete_node(n->n[i]); n->n[i] = NULL; } }
 }
 
-void simplefy(struct FUNCTION_NODE* n) {
+void simplify(struct FUNCTION_NODE* n) {
     if (!n->type || n->type == 4) return;
-    for (int i = 0; i < 15; i++) { if (n->n[i] != NULL) simplefy(n->n[i]); }
+    for (int i = 0; i < 15; i++) { if (n->n[i] != NULL) simplify(n->n[i]); }
     if (n->type == 1) {
         if (n->content[0] == '+') {
 
             if (n->n[0]->type == 0 && ((struct NUMBER*)n->n[0]->content)->numerator_re == 0 && ((struct NUMBER*)n->n[0]->content)->numerator_im == 0) {
                 struct FUNCTION_NODE* temp = copy_node(n->n[1]);
-                delete_node(n);
-                n = temp;
+                clear_node(n);
+                *n = *temp;
             }
             else if (n->n[1]->type == 0 && ((struct NUMBER*)n->n[1]->content)->numerator_re == 0 && ((struct NUMBER*)n->n[1]->content)->numerator_im == 0) {
                 struct FUNCTION_NODE* temp = copy_node(n->n[0]);
-                delete_node(n);
-                n = temp;
+                clear_node(n);
+                *n = *temp;
             }
 
             else if (!n->n[0]->type && !n->n[1]->type) {
                 struct NUMBER sum = add(*((struct NUMBER*)n->n[0]->content), *((struct NUMBER*)n->n[1]->content));
-                delete_node(n);
-                n = node();
+                clear_node(n);
                 fill_node_number(n, sum);
             }
         }
@@ -97,14 +96,20 @@ void simplefy(struct FUNCTION_NODE* n) {
         else if (n->content[0] == '-') {
             if (n->n[1]->type == 0 && ((struct NUMBER*)n->n[1]->content)->numerator_re == 0 && ((struct NUMBER*)n->n[1]->content)->numerator_im == 0) {
                 struct FUNCTION_NODE* temp = copy_node(n->n[0]);
-                delete_node(n);
-                n = temp;
+                clear_node(n);
+                *n = *temp;
             }
 
             else if (n->n[1]->type == 0 && ((struct NUMBER*)n->n[1]->content)->numerator_re == 0 && ((struct NUMBER*)n->n[1]->content)->numerator_im == 0) {
                 struct FUNCTION_NODE* temp = copy_node(n->n[0]);
-                delete_node(n);
-                n = temp;
+                clear_node(n);
+                *n = *temp;
+            }
+
+            else if (!n->n[0]->type && !n->n[1]->type) {
+                struct NUMBER dif = subtract(*((struct NUMBER*)n->n[0]->content), *((struct NUMBER*)n->n[1]->content));
+                clear_node(n);
+                fill_node_number(n, dif);
             }
         }
 
@@ -199,5 +204,6 @@ struct FUNCTION_NODE* derive(struct FUNCTION_NODE* n, char respectablevar[32]) {
         }
 
     }
+    simplify(new);
     return new;
 }
