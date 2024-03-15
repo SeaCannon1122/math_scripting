@@ -4,29 +4,12 @@
 #include "number.h"
 #include "function.h"
 
-/*struct NUMBER power(struct NUMBER base, struct NUMBER exponent) {
-    reduce(&base);
-    reduce(&exponent);
-
-    double based = (double) base.numerator_re / base.denominator_re;
-    double exponentd = (double) exponent.numerator_re / exponent.denominator_re;
-
-    double powd = pow(based, exponentd);
-
-    long long two = 1;
-
-    while(two * 2 * powd > 0 && two * 2 > 0) two*=2;
-
-    struct NUMBER ret = {two * powd, two};
-
-    return ret;
-}*/
 
 
 
 int main() {
 
-    struct FUNCTION_NODE* f = node();
+    /*struct FUNCTION_NODE* f = node();
     f->n[0] = node();
     f->n[1] = node();
     f->n[1]->n[0] = node();
@@ -52,6 +35,17 @@ int main() {
 
     delete_node(f);
     delete_node(fprime);
+    */
+
+    struct Int128 a = mul128(0x7ffffffffffffff0, 0x7fffffffffffffff);
+    struct Int128 b = mul128(0x7fffffffffffffff, 0x7fffffffffffffff);
+    struct Int128 result = add128(a, b);
+    printf("%llx   %llx\n", a.low, a.high);
+    print128(&a);
+    printf("\n");
+    print128(&b);
+    printf("\n");
+    print128(&result);
 
     return 0;
 }
