@@ -145,15 +145,22 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="function.c" />
+    <ClCompile Include="general.c" />
+    <ClCompile Include="Int128.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="number.c" />
+    <ClCompile Include="scalar.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="function.h" />
+    <ClInclude Include="general.h" />
+    <ClInclude Include="Headers.h" />
+    <ClInclude Include="Int128.h" />
     <ClInclude Include="number.h" />
+    <ClInclude Include="scalar.h" />
   </ItemGroup>
   <ItemGroup>
-    <MASM Include="int128.asm" />
+    <MASM Include="Int128_asm.asm" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

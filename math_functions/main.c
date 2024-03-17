@@ -1,9 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include "number.h"
-#include "function.h"
-
+#include "Headers.h"
 
 
 
@@ -37,15 +32,17 @@ int main() {
     delete_node(fprime);
     */
 
-    struct Int128 a = mul128(0x7ffffffffffffff0, 0x7fffffffffffffff);
-    struct Int128 b = mul128(0x7fffffffffffffff, 0x7fffffffffffffff);
-    struct Int128 result = add128(a, b);
-    printf("%llx   %llx\n", a.low, a.high);
-    print128(&a);
-    printf("\n");
-    print128(&b);
-    printf("\n");
-    print128(&result);
+    //struct NUMBER a = { 11, 3, 2, -12 };
+    //struct NUMBER b = { 7, 5, -4, 394 };
+    //char number[] = "-110.1\0";
+    //struct NUMBER c = String_to_NUMBER(number, 2);
+    double d = 187.6942;
+    struct NUMBER c = double_to_NUMBER(d);
+
+
+   //for(int i = 0; i< 1000000; i++) multiply(a, b);
+
+    print_number(&c);
 
     return 0;
 }

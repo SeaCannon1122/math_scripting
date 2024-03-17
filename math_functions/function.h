@@ -1,9 +1,7 @@
 #ifndef FUNCTION_H
 #define FUNCTION_H
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
+#include "Headers.h"
 
 extern char PLUS[32];
 extern char MINUS[32];

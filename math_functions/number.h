@@ -1,39 +1,36 @@
 #ifndef NUMBER_H
 #define NUMBER_H
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-
-struct Int128 {
-    unsigned long long low;
-    signed long long high;
-};
+#include "Headers.h"
 
 struct NUMBER
 {
-    long long numerator_re;
-    long long denominator_re;
-
-    long long numerator_im;
-    long long denominator_im;
+    struct SCALAR re;
+    struct SCALAR im;
 };
 
-
-
+//number methods
 unsigned long long gcd(long long a, long long b);
 
-void print128(struct Int128* x);
-extern struct Int128 mul128(long long a, long long b);
-struct Int128 add128(struct Int128 a, struct Int128 b);
+//conversion
 
+double SCALAR_to_double(struct SCALAR* x);
+struct NUMBER double_to_NUMBER(double d);
+struct NUMBER String_to_NUMBER(char* number, int base);
 
-void reduce(struct NUMBER* N);
+struct NUMBER combine(struct Int128* num_re, struct Int128* den_re, struct Int128* num_im, struct Int128* den_im);
+
+void reduce_NUMBER(struct NUMBER* N);
+void reduce(struct SCALAR* S);
 
 struct NUMBER add(struct NUMBER N1, struct NUMBER N2);
-struct NUMBER subtract(struct NUMBER N1, struct NUMBER N2);
 struct NUMBER multiply(struct NUMBER N1, struct NUMBER N2);
 struct NUMBER divide(struct NUMBER N1, struct NUMBER N2);
+
+struct NUMBER magnitude(struct NUMBER x);
+struct NUMBER ln(struct NUMBER x);
+struct NUMBER logarithm(struct NUMBER x, struct NUMBER base);
+
 struct NUMBER power(struct NUMBER base, struct NUMBER exponent);
 
 void print_number(struct NUMBER* N);

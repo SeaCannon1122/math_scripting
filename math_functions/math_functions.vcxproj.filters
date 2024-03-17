@@ -13,29 +13,59 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\Arithmetic">
+      <UniqueIdentifier>{320635bf-a967-47af-82c8-281c8a3a507b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\general">
+      <UniqueIdentifier>{99ebaf78-adce-475d-9319-3d83cdbad2a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\mathsystem">
+      <UniqueIdentifier>{8175aeae-3db3-4c65-8a9b-470a7c7c367d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Int128.c">
+      <Filter>Source Files\Arithmetic</Filter>
+    </ClCompile>
     <ClCompile Include="number.c">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Arithmetic</Filter>
+    </ClCompile>
+    <ClCompile Include="scalar.c">
+      <Filter>Source Files\Arithmetic</Filter>
+    </ClCompile>
+    <ClCompile Include="general.c">
+      <Filter>Source Files\general</Filter>
     </ClCompile>
     <ClCompile Include="function.c">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\mathsystem</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Int128.h">
+      <Filter>Source Files\Arithmetic</Filter>
+    </ClInclude>
     <ClInclude Include="number.h">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Arithmetic</Filter>
+    </ClInclude>
+    <ClInclude Include="scalar.h">
+      <Filter>Source Files\Arithmetic</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers.h">
+      <Filter>Source Files\general</Filter>
+    </ClInclude>
+    <ClInclude Include="general.h">
+      <Filter>Source Files\general</Filter>
     </ClInclude>
     <ClInclude Include="function.h">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\mathsystem</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <MASM Include="int128.asm">
-      <Filter>Source Files</Filter>
+    <MASM Include="Int128_asm.asm">
+      <Filter>Source Files\Arithmetic</Filter>
     </MASM>
   </ItemGroup>
 </Project>

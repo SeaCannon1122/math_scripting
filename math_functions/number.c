@@ -1,228 +1,190 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include "number.h"
-#include "function.h"
+#include "Headers.h"
 
+struct NUMBER combine(struct Int128* num_re, struct Int128* den_re, struct Int128* num_im, struct Int128* den_im) {
+    int sign_re = 1;
 
+    if (num_re->high < 0) { sign_re = -1, sign128(num_re); }
 
-unsigned long long gcd(long long a, long long b) {
-
-    if (a < b) { long long temp = a; a = b; b = temp; }
-    if (a == 0) return b;
-    if (b == 0) return a;
-
-    // Find the greatest power of 2 that divides both a and b
-    unsigned long long shift;
-    for (shift = 0; ((a | b) & 1) == 0; ++shift) {
-        a >>= 1;
-        b >>= 1;
+    while (num_re->high || den_re->high || num_re->low >= 0x8fffffffffffffff || den_re->low >= 0x8fffffffffffffff)
+    {
+        shiftright128(num_re); shiftright128(den_re);
     }
 
-    // Remove any remaining factors of 2 from a
-    while ((a & 1) == 0) {
-        a >>= 1;
+    int sign_im = 1;
+
+    if (num_im->high < 0) { sign_im = -1, sign128(num_im); }
+
+    while (num_im->high || den_im->high || num_im->low >= 0x8fffffffffffffff || den_im->low >= 0x8fffffffffffffff)
+    {
+        shiftright128(num_im); shiftright128(den_im);
     }
 
-    // Binary GCD algorithm
-    do {
-        // Remove any remaining factors of 2 from b
-        while ((b & 1) == 0) {
-            b >>= 1;
-        }
-
-        // Now a and b are both odd, so compute their absolute difference
-        if (a > b) {
-            unsigned long long temp = a;
-            a = b;
-            b = temp;
-        }
-        b = b - a;
-    } while (b != 0);
-
-    // Restore the common power of 2
-    return a << shift;
-}
-
-void print128(struct Int128* x) {
-    long long low = x->low;
-    long long high = x->high;
-    char sign = 0;
-    if (high < 0) {
-        sign = '-';
-        low = ~low;
-        high = ~high;
-        low++;
-        
-        if (!low) high++;
-    }
-
-    if(high) {
-        printf("%c%llx", sign, high);
-        char* ptr = (char*) &low;
-        for (int i = 7; i >= 0; i--) {
-            if ((ptr[i] & 0b11110000) == 0) printf("0");
-            else break;
-            if ((ptr[i] & 0b00001111) == 0) printf("0");
-            else break;
-        }
-        printf("%llx", low);
-    }
-    else printf("%c%llx", sign, low);
-
-}
-
-struct Int128 add128(struct Int128 a, struct Int128 b) {
-    struct Int128 res = { a.low + b.low, a.high + b.high };
-    if (res.low < a.low) res.high++;
-    return res;
-
-}
-
-void reduce(struct NUMBER* N) {
-
-    if (N->denominator_re == 0) { N->denominator_re = 1; N->numerator_re = 0; return; }
-    char sign = 0;
-
-    if ((double)N->denominator_re / N->numerator_re < 0) sign = 1;
-
-    if (N->numerator_re < 0) N->numerator_re = -N->numerator_re;
-    if (N->denominator_re < 0) N->denominator_re = -N->denominator_re;
-
-    long long d = gcd(N->numerator_re, N->denominator_re);
-
-    N->denominator_re /= d;
-    N->numerator_re /= d;
-    if (sign) N->numerator_re *= -1;
-
-
-
-    if (N->denominator_im == 0) { N->denominator_im = 1; N->numerator_im = 0; return; }
-    sign = 0;
-
-    if ((double)N->denominator_im / N->numerator_im < 0) sign = 1;
-
-    if (N->numerator_im < 0) N->numerator_im = -N->numerator_im;
-    if (N->denominator_im < 0) N->denominator_im = -N->denominator_im;
-
-    d = gcd(N->numerator_im, N->denominator_im);
-
-    N->denominator_im /= d;
-    N->numerator_im /= d;
-    if (sign) N->numerator_im *= -1;
-}
-
-struct NUMBER add(struct NUMBER N1, struct NUMBER N2) {
-    struct NUMBER ret;
-
-    reduce(&N1);
-    reduce(&N2);
-
-    long long d_re = gcd(N1.denominator_re, N2.denominator_re);
-
-    ret.denominator_re = N1.denominator_re * (N2.denominator_re / d_re);
-    ret.numerator_re = (N1.numerator_re * (N2.denominator_re / d_re)) + (N2.numerator_re * (N1.denominator_re / d_re));
-
-    long long d_im = gcd(N1.denominator_re, N2.denominator_re);
-
-    ret.denominator_im = N1.denominator_im * (N2.denominator_im / d_im);
-    ret.numerator_im = (N1.numerator_im * (N2.denominator_im / d_im)) + (N2.numerator_im * (N1.denominator_im / d_im));
-
-    reduce(&ret);
-
+    struct NUMBER ret = { num_re->low * sign_re, ret.re.denominator = den_re->low, ret.im.numerator = num_im->low * sign_im, ret.im.denominator = den_im->low };
     return ret;
 }
 
-struct NUMBER subtract(struct NUMBER N1, struct NUMBER N2) {
-    struct NUMBER ret;
 
-    reduce(&N1);
-    reduce(&N2);
+void reduce_NUMBER(struct NUMBER* N) {
 
-    long long d = gcd(N1.denominator_re, N2.denominator_re);
+    reduce(&(N->re));
+    reduce(&(N->im));
+}
 
-    ret.denominator_re = N1.denominator_re * (N2.denominator_re / d);
-    ret.numerator_re = (N1.numerator_re * (N2.denominator_re / d)) - (N2.numerator_re * (N1.denominator_re / d));
+void reduce(struct SCALAR* S) {
+    if (S->denominator == 0) { S->denominator = 1; S->numerator = 0; return; }
+    char sign = 0;
 
-    long long d_im = gcd(N1.denominator_re, N2.denominator_re);
+    if ((double)S->denominator / S->numerator < 0) sign = 1;
 
-    ret.denominator_im = N1.denominator_im * (N2.denominator_im / d);
-    ret.numerator_im = (N1.numerator_im * (N2.denominator_im / d)) - (N2.numerator_im * (N1.denominator_im / d));
+    if (S->numerator < 0) S->numerator = -S->numerator;
+    if (S->denominator < 0) S->denominator = -S->denominator;
 
-    reduce(&ret);
+    long long d = gcd(S->numerator, S->denominator);
+
+    S->denominator /= d;
+    S->numerator /= d;
+    if (sign) S->numerator *= -1;
+}
+
+struct NUMBER add(struct NUMBER N1, struct NUMBER N2) {
+
+    reduce_NUMBER(&N1);
+    reduce_NUMBER(&N2);
+
+    long long gcd_re = gcd(N1.re.denominator, N2.re.denominator);
+
+    struct Int128 den_re = mul128(N1.re.denominator / gcd_re , N2.re.denominator);
+    struct Int128 num_re = add128(mul128(N1.re.numerator, N2.re.denominator / gcd_re ), mul128(N2.re.numerator, N1.re.denominator / gcd_re));
+   
+    long long gcd_im = gcd(N1.im.denominator, N2.im.denominator);
+
+    struct Int128 den_im = mul128(N1.im.denominator / gcd_im, N2.im.denominator);
+    struct Int128 num_im = add128(mul128(N1.im.numerator, N2.im.denominator / gcd_im ), mul128(N2.im.numerator, N1.im.denominator / gcd_im));
+    
+    struct NUMBER ret = combine(&num_re, &den_re, &num_im, &den_im);
+
+    reduce_NUMBER(&ret);
 
     return ret;
 }
 
 struct NUMBER multiply(struct NUMBER N1, struct NUMBER N2) {
-    reduce(&N1);
-    reduce(&N2);
+    reduce_NUMBER(&N1);
+    reduce_NUMBER(&N2);
 
-    struct NUMBER re1 = { N1.numerator_re * N2.numerator_re, N1.denominator_re * N2.denominator_re, 0 , 1 };
-    struct NUMBER re2 = { N1.numerator_im * N2.numerator_im, N1.denominator_im * N2.denominator_im, 0 , 1 };
-    struct NUMBER re = subtract(re1, re2);
+    struct Int128 re1_num = mul128(N1.re.numerator , N2.re.numerator);
+    struct Int128 re1_den = mul128(N1.re.denominator , N2.re.denominator);
+    struct Int128 re2_num = mul128(-N1.im.numerator , N2.im.numerator);
+    struct Int128 re2_den = mul128(N1.im.denominator , N2.im.denominator);
 
-    struct NUMBER im1 = { 0, 1, N1.numerator_im * N2.numerator_re , N1.denominator_im * N2.denominator_re };
-    struct NUMBER im2 = { 0, 1, N1.numerator_re * N2.numerator_im , N1.denominator_re * N2.denominator_im };
-    struct NUMBER im = add(im1, im2);
+    struct NUMBER re = add(combine(&re1_num, &re1_den, &int128_0, &int128_1), combine(&re2_num, &re2_den, &int128_0, &int128_1));
 
-    struct NUMBER ret = { re.numerator_re, re.denominator_re, im.numerator_im, im.denominator_im };
+    struct Int128 im1_num = mul128(N1.re.numerator, N2.im.numerator);
+    struct Int128 im1_den = mul128(N1.re.denominator, N2.im.denominator);
+    struct Int128 im2_num = mul128(N1.im.numerator, N2.re.numerator);
+    struct Int128 im2_den = mul128(N1.im.denominator, N2.re.denominator);
 
-    reduce(&ret);
+    struct NUMBER im = add(combine(&int128_0, &int128_1, & im1_num, &im1_den), combine(&int128_0, &int128_1, &im2_num, &im2_den));
+
+    struct NUMBER ret = { re.re.numerator, re.re.denominator, im.im.numerator, im.im.denominator };
+
+    reduce_NUMBER(&ret);
 
     return ret;
 }
 
 struct NUMBER divide(struct NUMBER N1, struct NUMBER N2) {
-    reduce(&N1);
-    reduce(&N2);
+    reduce_NUMBER(&N1);
+    reduce_NUMBER(&N2);
 
-    N2.numerator_im *= -1;
+    N2.im.numerator *= -1;
+
 
     struct NUMBER num = multiply(N1, N2);
 
-    struct NUMBER resqrd = { N2.numerator_re * N2.numerator_re, N2.denominator_re * N2.denominator_re, 0, 1 };
-    struct NUMBER imsqrd = { N2.numerator_im * N2.numerator_im, N2.denominator_im * N2.denominator_im, 0, 1 };
+    struct Int128 res_num = mul128(N2.re.numerator , N2.re.numerator);
+    struct Int128 res_den = mul128(N2.re.denominator , N2.re.denominator);
+    struct Int128 ims_num = mul128(N2.im.numerator , N2.im.numerator);
+    struct Int128 ims_den = mul128(N2.im.denominator , N2.im.denominator);
 
-    struct NUMBER dem = add(resqrd, imsqrd);
+    struct NUMBER den = add(combine(&res_num, &res_den, &int128_0, &int128_1), combine(&ims_num, &ims_den, &int128_0, &int128_1));
+    long long temp = den.re.numerator;
+    den.re.numerator = den.re.denominator;
+    den.re.denominator = temp;
+    
+    struct NUMBER ret = multiply(num, den);
 
-    struct NUMBER ret = { num.numerator_re * dem.denominator_re, num.denominator_re * dem.numerator_re, num.numerator_im * dem.denominator_re, num.denominator_im * dem.numerator_re };
-    reduce(&ret);
+    reduce_NUMBER(&ret);
 
     return ret;
 }
 
+struct NUMBER magnitude(struct NUMBER x) {
+    struct NUMBER ret = { 0, 1, 0, 1 };
+    return ret;
+}
+
+struct NUMBER ln(struct NUMBER x) {
+    reduce_NUMBER(&x);
+    struct NUMBER ret = { 0, 1, 0, 1 };
+    if (x.im.numerator == 0) { double d = log( (double) x.re.numerator/x.re.denominator);
+    }
+    return ret;
+}
+struct NUMBER logarithm(struct NUMBER x, struct NUMBER base) {
+    reduce_NUMBER(&x);
+    reduce_NUMBER(&base);
+    struct NUMBER ret = divide(ln(x), ln(base));
+    return ret;
+}
+
 struct NUMBER power(struct NUMBER base, struct NUMBER exponent) {
-    reduce(&base);
-    reduce(&exponent);
+    reduce_NUMBER(&base);
+    reduce_NUMBER(&exponent);
 
-    double based = (double) base.numerator_re / base.denominator_re;
-    double exponentd = (double) exponent.numerator_re / exponent.denominator_re;
+    struct NUMBER ret = {1, 1, 0, 1};
 
-    double powd = pow(based, exponentd);
+    if (exponent.re.numerator == 0 && exponent.im.numerator == 0) {}
+    else if (exponent.re.denominator == 1 && exponent.re.numerator > 0) {
+        struct NUMBER re = { 1, 1, 0, 1 };
+        for (int i = 0; i < exponent.re.numerator; i++)  re = multiply(re, base);
 
-    long long two = 1;
+    }
 
-    while(two * 2 * powd > 0 && two * 2 > 0) two*=2;
-
-    struct NUMBER ret = {two * powd, two};
+    reduce_NUMBER(&ret);
 
     return ret;
 }
 
 void print_number(struct NUMBER* N) {
-    if (N->numerator_re) {
-        if (N->denominator_re != 1) printf("%lld/%lld", N->numerator_re, N->denominator_re);
-        else printf("%lld", N->numerator_re);
+    if (N->re.numerator) {
+        if (N->re.denominator != 1) printf("%lld/%lld", N->re.numerator, N->re.denominator);
+        else printf("%lld", N->re.numerator);
     }
-    if (N->numerator_re && N->numerator_im) printf(" + ");
-    if (N->numerator_im) {
-        if (N->denominator_im != 1) printf("%lld/%lld", N->numerator_im, N->denominator_im);
-        else printf("%lld", N->numerator_im);
+    if (N->re.numerator && N->im.numerator) printf(" + ");
+    if (N->im.numerator) {
+        if (N->im.denominator != 1) printf("%lld/%lld", N->im.numerator, N->im.denominator);
+        else printf("%lld", N->im.numerator);
         printf(" i");
     }
 
-    if (!N->numerator_re && !N->numerator_im) printf("0");
+    if (!N->re.numerator && !N->im.numerator) printf("0");
+
+
+}
+
+void print_number_dec(struct NUMBER* N) {
+    if (N->re.numerator) {
+        double re = (double)N->re.numerator / N->re.denominator;
+        printf("%.17f\n", re);
+    }
+    if (N->re.numerator && N->im.numerator) printf(" + ");
+    if (N->im.numerator) {
+        double im = (double)N->im.numerator / (double)N->im.denominator;
+        printf("%.17f\n", im);
+    }
+
+    if (!N->re.numerator && !N->im.numerator) printf("0");
 
 
 }
