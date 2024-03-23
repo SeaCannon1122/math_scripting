@@ -30,4 +30,14 @@ add rsp, 16
 ret
 mul128 ENDP
 
+
+
+
+div128 PROC
+; rdx = low 64 a
+; r8 = high 64 b
+
+
+div128 ENDP
+
 END

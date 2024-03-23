@@ -22,13 +22,13 @@
     <Filter Include="Source Files\mathsystem">
       <UniqueIdentifier>{8175aeae-3db3-4c65-8a9b-470a7c7c367d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Arithmetic\Int128">
+      <UniqueIdentifier>{ab75bf95-8569-44be-aec1-978c6110f217}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.c">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Int128.c">
-      <Filter>Source Files\Arithmetic</Filter>
     </ClCompile>
     <ClCompile Include="number.c">
       <Filter>Source Files\Arithmetic</Filter>
@@ -36,17 +36,17 @@
     <ClCompile Include="scalar.c">
       <Filter>Source Files\Arithmetic</Filter>
     </ClCompile>
-    <ClCompile Include="general.c">
-      <Filter>Source Files\general</Filter>
-    </ClCompile>
     <ClCompile Include="function.c">
       <Filter>Source Files\mathsystem</Filter>
     </ClCompile>
+    <ClCompile Include="Int128.c">
+      <Filter>Source Files\Arithmetic\Int128</Filter>
+    </ClCompile>
+    <ClCompile Include="general.c">
+      <Filter>Source Files\general</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Int128.h">
-      <Filter>Source Files\Arithmetic</Filter>
-    </ClInclude>
     <ClInclude Include="number.h">
       <Filter>Source Files\Arithmetic</Filter>
     </ClInclude>
@@ -62,10 +62,13 @@
     <ClInclude Include="function.h">
       <Filter>Source Files\mathsystem</Filter>
     </ClInclude>
+    <ClInclude Include="Int128.h">
+      <Filter>Source Files\Arithmetic\Int128</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <MASM Include="Int128_asm.asm">
-      <Filter>Source Files\Arithmetic</Filter>
+      <Filter>Source Files\Arithmetic\Int128</Filter>
     </MASM>
   </ItemGroup>
 </Project>

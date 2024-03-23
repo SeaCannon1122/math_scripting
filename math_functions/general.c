@@ -49,13 +49,24 @@ double SCALAR_to_double(struct SCALAR* x) {
 
 }
 
+struct SCALAR double_to_SCALAR(double d) {
+    long long intpart = (long long)d;
+    double decpart = d - intpart;
+    struct SCALAR intnum = { intpart, 1 };
+    struct SCALAR decnum = {(long long)(8316000000000000000 * decpart), 8316000000000000000 };
+    struct SCALAR ret = add_SCALAR(intnum, decnum);
+    reduce_NUMBER(&ret);
+   // ret = round_SCALAR(&ret, 3);
+    return ret;
+}
+
 struct NUMBER double_to_NUMBER(double d) {
     struct NUMBER ret = { s0, s0 };
-    long long intpart = d;
+    long long intpart = (long long) d;
     double decpart = d - intpart;
     struct NUMBER intnum = { { intpart, 1 }, s0 };
-    struct NUMBER decnum = { {8316000000000000000 * decpart, 8316000000000000000 }, s0 };
-    ret = add(intnum, decnum);
+    struct NUMBER decnum = { {(long long) (8316000000000000000 * decpart), 8316000000000000000 }, s0 };
+    ret = add_NUMBER(intnum, decnum);
     reduce_NUMBER(&ret);
     ret.re = round_SCALAR(&ret.re, 3);
     return ret;

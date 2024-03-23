@@ -31,6 +31,7 @@ void fill_node_operation(struct FUNCTION_NODE* n, char name[32]);
 void fill_node_variable(struct FUNCTION_NODE* n, char name[32]);
 
 struct FUNCTION_NODE* copy_node(struct FUNCTION_NODE* n);
+struct FUNCTION_NODE* replace_var(struct FUNCTION_NODE* n, struct FUNCTION_NODE* expression, char varname[32]);
 void print_node(struct FUNCTION_NODE* n);
 void simplify(struct FUNCTION_NODE* n);
 struct FUNCTION_NODE* derive(struct FUNCTION_NODE* n, char respectablevar[32]);
